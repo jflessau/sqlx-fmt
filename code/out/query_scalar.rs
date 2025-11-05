@@ -1,11 +1,10 @@
 sqlx::query_scalar!(
     Device,
-    r#"
-         select
-            2
+r#"
+        select 2
         from
-               tesdt
-    "#,
+            tesdt
+"#,
     device_id,
     care_home_id
 )
