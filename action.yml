@@ -43,9 +43,6 @@ runs:
         export SQLX_FMT_SQRUFF_CONFIG="${{ inputs.config-file }}"
         export SQLX_FMT_FAIL_ON_UNFORMATTED="${{ inputs.fail-on-unformatted }}"
 
-        echo "Binary path: $SQLX_FMT"
-        echo "Current directory: $(pwd)"
-        echo "Binary exists: $(test -f "$SQLX_FMT" && echo 'yes' || echo 'no')"
         echo "Config file: $SQLX_FMT_SQRUFF_CONFIG"
         echo "Fail on unformatted: $SQLX_FMT_FAIL_ON_UNFORMATTED"
 
