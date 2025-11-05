@@ -1,4 +1,4 @@
-name: GitHub Action Example
+name: github action example
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   github_action_example:
-    name: Run GitHub Action
+    name: run github action example
     runs-on: ubuntu-latest
 
     steps:

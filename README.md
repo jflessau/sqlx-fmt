@@ -1,46 +1,67 @@
 # sqlx-fmt
 
-A CLI tool and GitHub Action to format SQL code within sqlx macros in Rust files using sqruff. Supports both raw string literals (`r#"..."#`) and regular string literals (`"..."`).
+A CLI tool and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).  
+Supports raw string literals (`r#"..."#`) only.
 
 **Supported sqlx Macros**: `query!`, `query_unchecked!`, `query_as!`, `query_as_unchecked!`, `query_scalar!`, `query_scalar_unchecked!`, `migrate!`
 
 ## Prerequisites
 
-- Rust toolchain
 - [sqruff](https://github.com/quarylabs/sqruff) installed and available in PATH
-- A `.sqruff` configuration file in the current directory
+- A `.sqruff` configuration file
 
-## Installation
+<details>
+<summary><b>Demo .sqruff</b></summary>
+```toml
+[sqruff]
+dialect = sqlite
+exclude_rules = AM01,AM02
+rules = all
 
-```bash
-cargo build --release
-```
+[sqruff:indentation]
+indent_unit = space
+tab_space_size = 4
+indented_joins = True
+
+````
+</details>
 
 ## Usage
 
+Build or install it with cargo:
+
 ```bash
-sqlx-fmt --input <INPUT_FILE> --output <OUTPUT_FILE>
+# build
+cargo build --release
+
+# install
+cargo install --path .
+````
+
+Then run the formatter like this:
+
+```bash
+# format files
+sqlx-fmt format --path path_to_files_to_be_formatted --config path_to_sqruff_config
+
+# check formatting
+sqlx-fmt check --path path_to_files_to_be_formatted --config path_to_sqruff_config --check
 ```
 
-### Arguments
+### Commands
 
-- `--input`, `-i`: Input Rust file containing sqlx macros
-- `--output`, `-o`: Output Rust file to write formatted result
+- `format`: Formats SQL code within sqlx macros in the specified Rust files.
+- `check`: Checks if the SQL is formatted correctly without making changes.
 
 ### Example
 
 ```bash
-# Format SQL in a Rust file
-./target/release/sqlx-fmt --input src/database.rs --output src/database_formatted.rs
+sqlx-fmt format --path ./src --config .sqruff
 ```
-
-## Configuration File
-
-The tool uses sqruff for SQL formatting. Create a `.sqruff` configuration file according to their [documentation](https://github.com/quarylabs/sqruff/tree/main/docs)
 
 ## Development
 
-### Running Tests
+TDD is encouraged! To run the tests, use:
 
 ```bash
 cargo test
@@ -48,4 +69,17 @@ cargo test
 
 ## GitHub Action
 
-This project also provides a GitHub Action for checking SQL formatting in CI/CD pipelines. See the [ACTION.md](ACTION.md) file for details.
+Use the format checker as a step in a GitHub Actions like so:
+
+```yaml
+steps:
+  - name: checkout code
+    uses: actions/checkout@v4
+
+  - name: run format checker
+    uses: jflessau/sqlx-fmt@v1
+    with:
+      context: "./code_to_format"
+      config-file: "./code_to_format/.sqruff"
+      fail-on-unformatted: "false"
+```
