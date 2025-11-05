@@ -18,6 +18,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Install Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Install sqruff
+      uses: quarylabs/install-sqruff-cli-action@main
+
     - name: Build sqlx-fmt
       shell: bash
       working-directory: ${{ github.action_path }}
@@ -26,15 +34,18 @@ runs:
 
     - name: Check SQL formatting
       shell: bash
-      working-directory: ${{ inputs.context }}
       run: |
         set -e
 
         SQLX_FMT="${{ github.action_path }}/target/release/sqlx-fmt"
-        SQLX_FMT_SQRUFF_CONFIG="${{ inputs.config-file }}"
-        SQLX_FMT_FAIL_ON_UNFORMATTED="${{ inputs.fail-on-diff }}"
+        export SQLX_FMT_PATH="${{ inputs.context }}"
+        export SQLX_FMT_SQRUFF_CONFIG="${{ inputs.config-file }}"
+        export SQLX_FMT_FAIL_ON_UNFORMATTED="${{ inputs.fail-on-unformatted }}"
 
-        $SQLX_FMT check
+        echo "Config file: $SQLX_FMT_SQRUFF_CONFIG"
+        echo "Fail on unformatted: $SQLX_FMT_FAIL_ON_UNFORMATTED"
+
+        "$SQLX_FMT" check
 
 branding:
   icon: "code"
