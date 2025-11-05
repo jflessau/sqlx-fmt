@@ -18,6 +18,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Install Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Install sqruff
+      uses: quarylabs/install-sqruff-cli-action@main
+
     - name: Build sqlx-fmt
       shell: bash
       working-directory: ${{ github.action_path }}
@@ -27,7 +35,6 @@ runs:
 
     - name: Check SQL formatting
       shell: bash
-      uses: cargo-bins/cargo-binstall@main
       working-directory: ${{ inputs.context }}
       run: |
         set -e
