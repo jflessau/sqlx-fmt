@@ -7,7 +7,7 @@ on:
 
 jobs:
   format:
-    name: "Format"
+    name: format
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -24,7 +24,7 @@ jobs:
           cargo fmt --all -- --check
 
   lint:
-    name: "Lint"
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -48,7 +48,7 @@ jobs:
           cargo clippy -- --D warnings
 
   test:
-    name: "Test"
+    name: test
     runs-on: ubuntu-latest
     steps:
       - name: checkout
