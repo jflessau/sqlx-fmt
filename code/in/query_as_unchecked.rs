@@ -12,6 +12,8 @@ sqlx::query_as_unchecked!(
            	doors.amount as "active_door_zones_for_out_of_room_detection!"
                 from
            	device d
+
+
                 inner join
            	care_home c on c.id = d."careHomeID"
 

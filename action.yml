@@ -1,29 +1,31 @@
-name: 'SQLx Format Checker'
-description: 'Check if SQL code in sqlx macros needs formatting using sqruff'
-author: 'sqlx-fmt'
+name: "SQLx Format Checker"
+description: "Check if SQL code in sqlx macros needs formatting using sqruff"
+author: "sqlx-fmt"
 
 inputs:
   context:
-    description: 'Directory containing Rust files and sqruff config'
+    description: "Directory containing Rust files and sqruff config"
     required: true
-    default: '.'
+    default: "."
   config-file:
-    description: 'Path to sqruff configuration file relative to context'
+    description: "Path to sqruff configuration file relative to context"
     required: false
-    default: '.sqruff'
+    default: ".sqruff"
   fail-on-diff:
-    description: 'Whether to fail the action if formatting changes are needed'
+    description: "Whether to fail the action if formatting changes are needed"
     required: false
-    default: 'true'
+    default: "true"
 
 outputs:
-  needs-formatting:
-    description: 'Whether any files need formatting (true/false)'
-  changed-files:
-    description: 'List of files that need formatting (newline separated)'
+  needs_formatting:
+    description: "Whether any files need formatting (true/false)"
+    value: "false"
+  changed_files:
+    description: "List of files that need formatting (newline separated)"
+    value: ""
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Install sqruff
       shell: bash
@@ -63,8 +65,8 @@ runs:
 
         if [ -z "$RUST_FILES" ]; then
           echo "No Rust files found"
-          echo "needs-formatting=false" >> $GITHUB_OUTPUT
-          echo "changed-files=" >> $GITHUB_OUTPUT
+          echo "needs_formatting=false" >> $GITHUB_OUTPUT
+          echo "changed_files=" >> $GITHUB_OUTPUT
           exit 0
         fi
 
@@ -105,8 +107,8 @@ runs:
         done
 
         # Set outputs
-        echo "needs-formatting=$NEEDS_FORMATTING" >> $GITHUB_OUTPUT
-        echo "changed-files<<EOF" >> $GITHUB_OUTPUT
+        echo "needs_formatting=$NEEDS_FORMATTING" >> $GITHUB_OUTPUT
+        echo "changed_files<<EOF" >> $GITHUB_OUTPUT
         echo -n "$CHANGED_FILES" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
 
@@ -125,5 +127,5 @@ runs:
         fi
 
 branding:
-  icon: 'code'
-  color: 'blue'
+  icon: "code"
+  color: "blue"
