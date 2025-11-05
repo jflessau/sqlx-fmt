@@ -65,6 +65,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn format_files(path: &str, config: &str) -> Result<(), Box<dyn std::error::Error>> {
+    println!("Formatting files in {path}, with config at {config}");
+
     let rust_files = find_rust_files(path)?;
 
     if rust_files.is_empty() {
@@ -103,6 +105,7 @@ fn check_files(
     config: &str,
     fail_on_unformatted: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    println!("Checking files in {path}, with config at {config}");
     let rust_files = find_rust_files(path)?;
 
     if rust_files.is_empty() {

@@ -34,18 +34,16 @@ runs:
 
     - name: Check SQL formatting
       shell: bash
-      working-directory: ${{ inputs.context }}
       run: |
         set -e
 
         SQLX_FMT="${{ github.action_path }}/target/release/sqlx-fmt"
-        export SQLX_FMT_PATH="."
+        export SQLX_FMT_PATH="${{ inputs.context }}"
         export SQLX_FMT_SQRUFF_CONFIG="${{ inputs.config-file }}"
         export SQLX_FMT_FAIL_ON_UNFORMATTED="${{ inputs.fail-on-unformatted }}"
 
         echo "Config file: $SQLX_FMT_SQRUFF_CONFIG"
         echo "Fail on unformatted: $SQLX_FMT_FAIL_ON_UNFORMATTED"
-        echo "$(ls -R .)"
 
         "$SQLX_FMT" check
 
