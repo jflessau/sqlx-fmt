@@ -79,4 +79,5 @@ jobs:
           locked: true
       - name: cargo nextest
         run: |
+          cargo binstall sqruff
           cargo nextest run --no-fail-fast

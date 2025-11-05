@@ -23,6 +23,7 @@ runs:
       working-directory: ${{ github.action_path }}
       run: |
         cargo build --release
+        cargo binstall sqruff
 
     - name: Check SQL formatting
       shell: bash
