@@ -1,38 +1,27 @@
-name: SQL Format Check
+name: GitHub Action Example
 
 on:
-  pull_request:
-    paths:
-      - "**/*.rs"
   push:
     branches:
       - main
-      - develop
 
 jobs:
-  sql-format-check:
-    name: Check SQL Formatting
+  github_action_example:
+    name: Run GitHub Action
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Rust
+      - name: setup rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
 
-      - name: Run SQL Format Check
+      - name: run format checker
         uses: ./
         with:
-          context: "./code/in"
-          config-file: ".sqruff"
-          fail-on-diff: "true"
-
-      - name: Handle formatting issues
-        if: steps.sql-check.outputs.needs-formatting == 'true'
-        run: |
-          echo "The following files need SQL formatting:"
-          echo "${{ steps.sql-check.outputs.changed-files }}"
-          echo "Please run sqlx-fmt on these files and commit the changes."
+          context: "./code_to_format"
+          config-file: "./code_to_format/.sqruff"
+          fail-on-unformatted: "false"

@@ -1,46 +1,28 @@
 name: "SQLx Format Checker"
-description: "Check if SQL code in sqlx macros needs formatting using sqruff"
-author: "sqlx-fmt"
+description: "Check if SQL code in sqlx macros needs formatting using sqruff."
 
 inputs:
   context:
-    description: "Directory containing Rust files and sqruff config"
-    required: true
+    description: "Directory containing Rust files"
+    required: false
     default: "."
   config-file:
-    description: "Path to sqruff configuration file relative to context"
+    description: "Path to sqruff configuration file (.sqruff)"
     required: false
     default: ".sqruff"
-  fail-on-diff:
+  fail-on-unformatted:
     description: "Whether to fail the action if formatting changes are needed"
     required: false
     default: "true"
 
-outputs:
-  needs_formatting:
-    description: "Whether any files need formatting (true/false)"
-    value: "false"
-  changed_files:
-    description: "List of files that need formatting (newline separated)"
-    value: ""
-
 runs:
   using: "composite"
   steps:
-    - name: Install sqruff
-      shell: bash
-      run: |
-        echo "Installing sqruff..."
-        pip install sqruff
-        sqruff --version
-
     - name: Build sqlx-fmt
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
-        echo "Building sqlx-fmt..."
         cargo build --release
-        echo "Built sqlx-fmt at: ${{ github.action_path }}/target/release/sqlx-fmt"
 
     - name: Check SQL formatting
       shell: bash
@@ -49,82 +31,10 @@ runs:
         set -e
 
         SQLX_FMT="${{ github.action_path }}/target/release/sqlx-fmt"
-        CONFIG_FILE="${{ inputs.config-file }}"
-        FAIL_ON_DIFF="${{ inputs.fail-on-diff }}"
+        SQLX_FMT_SQRUFF_CONFIG="${{ inputs.config-file }}"
+        SQLX_FMT_FAIL_ON_UNFORMATTED="${{ inputs.fail-on-diff }}"
 
-        echo "Checking SQL formatting in directory: $(pwd)"
-        echo "Using config file: $CONFIG_FILE"
-
-        if [ ! -f "$CONFIG_FILE" ]; then
-          echo "Error: Config file '$CONFIG_FILE' not found"
-          exit 1
-        fi
-
-        # Find all .rs files
-        RUST_FILES=$(find . -name "*.rs" -type f)
-
-        if [ -z "$RUST_FILES" ]; then
-          echo "No Rust files found"
-          echo "needs_formatting=false" >> $GITHUB_OUTPUT
-          echo "changed_files=" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-
-        echo "Found Rust files:"
-        echo "$RUST_FILES"
-
-        CHANGED_FILES=""
-        NEEDS_FORMATTING=false
-
-        # Process each Rust file
-        for file in $RUST_FILES; do
-          echo "Checking file: $file"
-
-          # Create temporary file for formatted version
-          TEMP_FILE=$(mktemp)
-
-          # Run sqlx-fmt
-          if "$SQLX_FMT" --input "$file" --output "$TEMP_FILE"; then
-            # Compare original and formatted files
-            if ! cmp -s "$file" "$TEMP_FILE"; then
-              echo "❌ File needs formatting: $file"
-              CHANGED_FILES="$CHANGED_FILES$file"$'\n'
-              NEEDS_FORMATTING=true
-
-              # Show diff for debugging
-              echo "Diff for $file:"
-              diff -u "$file" "$TEMP_FILE" || true
-              echo "---"
-            else
-              echo "✅ File is already formatted: $file"
-            fi
-          else
-            echo "⚠️ Error processing file: $file"
-          fi
-
-          # Clean up temp file
-          rm -f "$TEMP_FILE"
-        done
-
-        # Set outputs
-        echo "needs_formatting=$NEEDS_FORMATTING" >> $GITHUB_OUTPUT
-        echo "changed_files<<EOF" >> $GITHUB_OUTPUT
-        echo -n "$CHANGED_FILES" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-
-        # Summary
-        if [ "$NEEDS_FORMATTING" = "true" ]; then
-          echo "❌ Some files need SQL formatting"
-          echo "Files that need formatting:"
-          echo "$CHANGED_FILES"
-
-          if [ "$FAIL_ON_DIFF" = "true" ]; then
-            echo "Action configured to fail on formatting differences"
-            exit 1
-          fi
-        else
-          echo "✅ All files are properly formatted"
-        fi
+        $SQLX_FMT check
 
 branding:
   icon: "code"
