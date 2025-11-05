@@ -27,6 +27,7 @@ runs:
 
     - name: Check SQL formatting
       shell: bash
+      uses: cargo-bins/cargo-binstall@main
       working-directory: ${{ inputs.context }}
       run: |
         set -e
