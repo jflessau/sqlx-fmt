@@ -1,6 +1,6 @@
 # sqlx-fmt
 
-A CLI tool to format SQL code within sqlx macros in Rust files using sqruff.
+A CLI tool to format SQL code within sqlx macros in Rust files using sqruff. Supports both raw string literals (`r#"..."#`) and regular string literals (`"..."`).
 
 ## Overview
 
@@ -48,7 +48,7 @@ sqlx-fmt --input <INPUT_FILE> --output <OUTPUT_FILE>
 
 ## How it Works
 
-1. **Parse**: The tool uses regex to find sqlx macros with raw string literals (`r#"..."`#)
+1. **Parse**: The tool uses regex to find sqlx macros with both raw string literals (`r#"..."#`) and regular string literals (`"..."`)
 2. **Extract**: SQL content is extracted from each macro
 3. **Format**: Each SQL snippet is written to a temporary file and formatted using sqruff
 4. **Replace**: The formatted SQL is inserted back into the Rust code with proper indentation
@@ -69,9 +69,12 @@ tab_space_size = 4
 indented_joins = True
 ```
 
-## Example
+## Examples
 
-### Before (input)
+### Raw String Literals
+
+#### Before (input)
+
 ```rust
 sqlx::query!(
     r#"
@@ -92,7 +95,8 @@ sqlx::query!(
 )
 ```
 
-### After (output)
+#### After (output)
+
 ```rust
 sqlx::query!(
     r#"
@@ -120,11 +124,45 @@ sqlx::query!(
 )
 ```
 
+### Regular String Literals
+
+#### Before (input)
+
+```rust
+sqlx::migrate!("select 1 from    test")
+.fetch_one(pool)
+.await
+
+sqlx::query!("SELECT   id,  name FROM users WHERE active =    true")
+.fetch_all(pool)
+.await
+```
+
+#### After (output)
+
+```rust
+sqlx::migrate!("select 1 from test")
+.fetch_one(pool)
+.await
+
+sqlx::query!("
+        SELECT
+            id,
+            name
+        FROM users WHERE active = true
+"
+)
+.fetch_all(pool)
+.await
+```
+
 ## Features
 
+- **Dual String Support**: Handles both raw string literals (`r#"..."#`) and regular string literals (`"..."`)
 - **Preserves Rust Code**: Only SQL within sqlx macros is modified
 - **Maintains Indentation**: The base indentation level of the Rust code is preserved
 - **Multiple Macros**: Handles multiple sqlx macros in a single file
+- **Smart Formatting**: Single-line SQL stays on one line, multi-line SQL gets proper indentation
 - **Safe Processing**: Creates new output file instead of modifying input file
 - **Error Handling**: Provides clear error messages for common issues
 

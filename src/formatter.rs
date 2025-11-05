@@ -10,14 +10,26 @@ const SQRUFF_CONFIG: &str = ".sqruff";
 const FIX_COMMAND: &str = "fix";
 
 pub fn format_sqlx_file(input_content: &str) -> Result<String, Box<dyn std::error::Error>> {
-    // Simple pattern to match sqlx macros with raw string literals
+    let mut result = input_content.to_string();
+
+    // Process raw string literals first
+    result = process_raw_string_macros(&result)?;
+
+    // Then process regular string literals
+    result = process_regular_string_macros(&result)?;
+
+    Ok(result)
+}
+
+fn process_raw_string_macros(content: &str) -> Result<String, Box<dyn std::error::Error>> {
+    // Pattern to match sqlx macros with raw string literals
     let pattern = r###"(?s)([ \t]*)(sqlx::(query!|query_unchecked!|query_as!|query_as_unchecked!|query_scalar!|query_scalar_unchecked!|migrate!)\s*\(\s*r#")(.+?)([ \t]*"#)"###;
     let macro_regex = Regex::new(pattern)?;
 
-    let mut result = input_content.to_string();
+    let mut result = content.to_string();
 
     // Process matches in reverse order to avoid offset issues
-    let mut matches: Vec<_> = macro_regex.find_iter(input_content).collect();
+    let mut matches: Vec<_> = macro_regex.find_iter(content).collect();
     matches.reverse();
 
     for m in matches {
@@ -38,6 +50,62 @@ pub fn format_sqlx_file(input_content: &str) -> Result<String, Box<dyn std::erro
                 "{}{}{}{}{}{}",
                 base_indent, macro_prefix, NEWLINE, indented_sql, NEWLINE, macro_suffix
             );
+
+            // Replace in result
+            let start = m.start();
+            let end = m.end();
+            result.replace_range(start..end, &new_macro);
+        }
+    }
+
+    Ok(result)
+}
+
+fn process_regular_string_macros(content: &str) -> Result<String, Box<dyn std::error::Error>> {
+    // Pattern to match sqlx macros with regular string literals
+    let pattern = r###"([ \t]*)(sqlx::(query!|query_unchecked!|query_as!|query_as_unchecked!|query_scalar!|query_scalar_unchecked!|migrate!)\s*\(\s*)"([^"]+)"(.*)"###;
+    let macro_regex = Regex::new(pattern)?;
+
+    let mut result = content.to_string();
+
+    // Process matches in reverse order to avoid offset issues
+    let mut matches: Vec<_> = macro_regex.find_iter(content).collect();
+    matches.reverse();
+
+    for m in matches {
+        if let Some(captures) = macro_regex.captures(m.as_str()) {
+            let base_indent = captures.get(1).unwrap().as_str();
+            let macro_part = captures.get(2).unwrap().as_str();
+            let sql_content = captures.get(4).unwrap().as_str();
+            let closing_part = captures.get(5).unwrap().as_str();
+
+            // Format the SQL
+            let formatted_sql = format_sql_content(sql_content)?;
+
+            // For regular strings, keep them simple - just replace the SQL content
+            let new_macro = if formatted_sql.contains('\n') {
+                // Multi-line: use indented format
+                let indented_sql = indent_sql(&formatted_sql, base_indent);
+                format!(
+                    "{}{}\"{}{}{}\"\n{}{}",
+                    base_indent,
+                    macro_part.trim_start(),
+                    NEWLINE,
+                    indented_sql,
+                    NEWLINE,
+                    base_indent,
+                    closing_part
+                )
+            } else {
+                // Single line: keep it simple
+                format!(
+                    "{}{}\"{}\"{}",
+                    base_indent,
+                    macro_part.trim_start(),
+                    formatted_sql,
+                    closing_part
+                )
+            };
 
             // Replace in result
             let start = m.start();
@@ -123,7 +191,7 @@ mod tests {
     }
 
     #[test]
-    fn test_regex_matching() {
+    fn test_raw_string_regex_matching() {
         let content = "    sqlx::query!(\n        r#\"\n            select id from users\n        \"#,\n        user_id\n    )";
 
         let pattern = r###"(?s)([ \t]*)(sqlx::(query!|query_unchecked!|query_as!|query_as_unchecked!|query_scalar!|query_scalar_unchecked!|migrate!)\s*\(\s*r#")(.+?)([ \t]*"#)"###;
@@ -134,5 +202,19 @@ mod tests {
         assert!(captures.get(2).unwrap().as_str().contains("sqlx::query!"));
         let users_check = "select id from users";
         assert!(captures.get(4).unwrap().as_str().contains(users_check));
+    }
+
+    #[test]
+    fn test_regular_string_regex_matching() {
+        let content = "sqlx::migrate!(\"select 1 from    test\")";
+
+        let pattern = r###"([ \t]*)(sqlx::(query!|query_unchecked!|query_as!|query_as_unchecked!|query_scalar!|query_scalar_unchecked!|migrate!)\s*\(\s*)"([^"]+)"(.*)"###;
+        let regex = Regex::new(pattern).unwrap();
+
+        let captures = regex.captures(content).unwrap();
+        assert_eq!(captures.get(1).unwrap().as_str(), "");
+        assert!(captures.get(2).unwrap().as_str().contains("sqlx::migrate!"));
+        let test_check = "select 1 from    test";
+        assert_eq!(captures.get(4).unwrap().as_str(), test_check);
     }
 }
