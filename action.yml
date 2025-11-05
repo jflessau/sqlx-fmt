@@ -46,6 +46,9 @@ runs:
         echo "Config file: $SQLX_FMT_SQRUFF_CONFIG"
         echo "Fail on unformatted: $SQLX_FMT_FAIL_ON_UNFORMATTED"
 
+        ls
+        ls .
+        ls -R l
         "$SQLX_FMT" check
 
 branding:
