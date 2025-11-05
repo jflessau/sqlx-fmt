@@ -1,0 +1,9 @@
+[package]
+name = "sqlx-fmt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+regex = "1.0"
+tempfile = "3.0"
