@@ -1,0 +1,68 @@
+name: SQL Format Check
+
+on:
+  pull_request:
+    paths:
+      - '**/*.rs'
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  sql-format-check:
+    name: Check SQL Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Setup Python for sqruff
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run SQL Format Check
+        uses: ./
+        with:
+          context: './src'
+          config-file: '.sqruff'
+          fail-on-diff: 'true'
+
+  sql-format-check-with-custom-config:
+    name: Check SQL Formatting (Custom Config)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Setup Python for sqruff
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run SQL Format Check
+        uses: ./
+        with:
+          context: '.'
+          config-file: 'config/.sqruff'
+          fail-on-diff: 'false'
+
+      - name: Handle formatting issues
+        if: steps.sql-check.outputs.needs-formatting == 'true'
+        run: |
+          echo "The following files need SQL formatting:"
+          echo "${{ steps.sql-check.outputs.changed-files }}"
+          echo "Please run sqlx-fmt on these files and commit the changes."

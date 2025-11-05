@@ -1,20 +1,8 @@
 # sqlx-fmt
 
-A CLI tool to format SQL code within sqlx macros in Rust files using sqruff. Supports both raw string literals (`r#"..."#`) and regular string literals (`"..."`).
+A CLI tool and GitHub Action to format SQL code within sqlx macros in Rust files using sqruff. Supports both raw string literals (`r#"..."#`) and regular string literals (`"..."`).
 
-## Overview
-
-This tool automatically finds sqlx macros in Rust source files, extracts the SQL code, formats it using sqruff, and writes the result back to a new file while preserving the original Rust code structure and indentation.
-
-## Supported sqlx Macros
-
-- `query!`
-- `query_unchecked!`
-- `query_as!`
-- `query_as_unchecked!`
-- `query_scalar!`
-- `query_scalar_unchecked!`
-- `migrate!`
+**Supported sqlx Macros**: `query!`, `query_unchecked!`, `query_as!`, `query_as_unchecked!`, `query_scalar!`, `query_scalar_unchecked!`, `migrate!`
 
 ## Prerequisites
 
@@ -46,125 +34,9 @@ sqlx-fmt --input <INPUT_FILE> --output <OUTPUT_FILE>
 ./target/release/sqlx-fmt --input src/database.rs --output src/database_formatted.rs
 ```
 
-## How it Works
+## Configuration File
 
-1. **Parse**: The tool uses regex to find sqlx macros with both raw string literals (`r#"..."#`) and regular string literals (`"..."`)
-2. **Extract**: SQL content is extracted from each macro
-3. **Format**: Each SQL snippet is written to a temporary file and formatted using sqruff
-4. **Replace**: The formatted SQL is inserted back into the Rust code with proper indentation
-5. **Write**: The result is written to the output file
-
-## Configuration
-
-The tool uses sqruff for SQL formatting. Create a `.sqruff` configuration file in your project root:
-
-```toml
-[sqruff]
-dialect = postgres
-rules = all
-
-[sqruff:indentation]
-indent_unit = space
-tab_space_size = 4
-indented_joins = True
-```
-
-## Examples
-
-### Raw String Literals
-
-#### Before (input)
-
-```rust
-sqlx::query!(
-    r#"
-        select exists (
-      		select "id"
-      		from "event"
-      		where
-     			"reason" = 'fall_detection'
-                and "deviceID" = $1
-     			and (
-                    ("hasApprovalByHumanInTheLoop" or (not "needsApprovalByHumanInTheLoop")) and "createdAt" > now() - interval '5 minutes'
-                    or
-                    ("needsApprovalByHumanInTheLoop" and "createdAt" > now() - interval '120 seconds')
-                )
-        ) as "exists!"
-    "#,
-    self.id
-)
-```
-
-#### After (output)
-
-```rust
-sqlx::query!(
-    r#"
-        select exists(
-            select "id"
-            from "event"
-            where
-                "reason" = 'fall_detection'
-                and "deviceID" = $1
-                and (
-                    (
-                        "hasApprovalByHumanInTheLoop"
-                        or (not "needsApprovalByHumanInTheLoop")
-                    )
-                    and "createdAt" > now() - interval '5 minutes'
-                    or
-                    (
-                        "needsApprovalByHumanInTheLoop"
-                        and "createdAt" > now() - interval '120 seconds'
-                    )
-                )
-        ) as "exists!"
-    "#,
-    self.id
-)
-```
-
-### Regular String Literals
-
-#### Before (input)
-
-```rust
-sqlx::migrate!("select 1 from    test")
-.fetch_one(pool)
-.await
-
-sqlx::query!("SELECT   id,  name FROM users WHERE active =    true")
-.fetch_all(pool)
-.await
-```
-
-#### After (output)
-
-```rust
-sqlx::migrate!("select 1 from test")
-.fetch_one(pool)
-.await
-
-sqlx::query!("
-        SELECT
-            id,
-            name
-        FROM users WHERE active = true
-"
-)
-.fetch_all(pool)
-.await
-```
-
-## Features
-
-- **Dual String Support**: Handles both raw string literals (`r#"..."#`) and regular string literals (`"..."`)
-- **Preserves Rust Code**: Only SQL within sqlx macros is modified
-- **Maintains Indentation**: The base indentation level of the Rust code is preserved
-- **Multiple Macros**: Handles multiple sqlx macros in a single file
-- **Smart Formatting**: Single-line SQL stays on one line, multi-line SQL gets proper indentation
-- **Safe Processing**: Creates new output file instead of modifying input file
-- **Error Handling**: Provides clear error messages for common issues
+The tool uses sqruff for SQL formatting. Create a `.sqruff` configuration file according to their [documentation](https://github.com/quarylabs/sqruff/tree/main/docs)
 
 ## Development
 
@@ -174,12 +46,6 @@ sqlx::query!("
 cargo test
 ```
 
-### Building
+## GitHub Action
 
-```bash
-cargo build --release
-```
-
-## License
-
-This project is open source. Please check the repository for license details.
+This project also provides a GitHub Action for checking SQL formatting in CI/CD pipelines. See the [ACTION.md](ACTION.md) file for details.
