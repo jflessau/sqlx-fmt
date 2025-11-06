@@ -1,23 +1,26 @@
 # sqlx-fmt
 
-A CLI tool and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).
-
-## Prerequisites
-
-You need [Rust](https://rust-lang.org/tools/install/) and [sqruff](https://github.com/quarylabs/sqruff) installed and available in PATH.
+A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).
 
 ## Installation
 
-Install it with cargo: `cargo install --path .`
+Install [sqruff](https://github.com/quarylabs/sqruff) if you haven't already: `cargo install sqruff`
 
-## Run
+Then install sqlx-fmt with: 
+```bash
+git clone https://github.com/jflessau/sqlx-fmt.git
+cd sqlx-fmt
+cargo install --path .
+```
+
+## Usage
 
 ```bash
 # format files
-sqlx-fmt format --path path_to_files --config path_to_sqruff_config
+sqlx-fmt format --path path_to_files
 
 # check formatting
-sqlx-fmt check --path path_to_files --config path_to_sqruff_config
+sqlx-fmt check --path path_to_files
 ```
 
 ### Example
@@ -26,9 +29,22 @@ sqlx-fmt check --path path_to_files --config path_to_sqruff_config
 sqlx-fmt format --path ./src --config .sqruff
 ```
 
-## Development
+<details>
+<summary><b>Example .sqruff config</b></summary>
+  
+<a href="https://github.com/quarylabs/sqruff/blob/main/docs/rules.md">sqruff config docs</a>
 
-TDD is encouraged! To run the tests, use `cargo test`.
+<pre>
+[sqruff]
+dialect = postgres
+rules = all
+
+[sqruff:indentation]
+indent_unit = space
+tab_space_size = 4
+indented_joins = True
+</pre>
+</details>
 
 ## GitHub Action
 
@@ -40,12 +56,18 @@ steps:
     uses: actions/checkout@v4
 
   - name: run format checker
-    uses: jflessau/sqlx-fmt@v1
+    uses: jflessau/sqlx-fmt@main
     with:
       context: "./code_to_format"
       config-file: "./code_to_format/.sqruff"
       fail-on-unformatted: "false"
 ```
+
+## Development
+
+TDD is encouraged! To run the tests, use `cargo test`.
+
+
 
 ## License
 
