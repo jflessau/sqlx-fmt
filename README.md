@@ -6,7 +6,8 @@ A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/laun
 
 Install [sqruff](https://github.com/quarylabs/sqruff) if you haven't already: `cargo install sqruff`
 
-Then install sqlx-fmt with: 
+Then install sqlx-fmt with:
+
 ```bash
 git clone https://github.com/jflessau/sqlx-fmt.git
 cd sqlx-fmt
@@ -66,8 +67,6 @@ steps:
 ## Development
 
 TDD is encouraged! To run the tests, use `cargo test`.
-
-
 
 ## License
 

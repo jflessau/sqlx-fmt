@@ -24,7 +24,7 @@ enum Commands {
         #[arg(long, default_value = ".sqruff", env = "SQLX_FMT_SQRUFF_CONFIG")]
         config: String,
 
-        /// Literal indentation level
+        /// Literal indentation level, should match `tab_space_size` used in your .sqruff config
         #[arg(long, default_value = "4", env = "SQLX_FMT_LITERAL_INDENTATION")]
         literal_indentation: usize,
 
@@ -46,7 +46,7 @@ enum Commands {
         #[arg(long, default_value = "true", env = "SQLX_FMT_FAIL_ON_UNFORMATTED")]
         fail_on_unformatted: bool,
 
-        /// Literal indentation level
+        /// Literal indentation level, should match `tab_space_size` used in your .sqruff config
         #[arg(long, default_value = "4", env = "SQLX_FMT_LITERAL_INDENTATION")]
         literal_indentation: usize,
 
