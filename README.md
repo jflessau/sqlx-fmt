@@ -4,6 +4,8 @@ A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/laun
 
 This is not an official sqlx project, just something I always wanted to have.
 
+This project is a WiP. 
+
 ## Installation
 
 Install [sqruff](https://github.com/quarylabs/sqruff) if you haven't already: `cargo install sqruff`
