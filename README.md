@@ -2,6 +2,8 @@
 
 A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).
 
+This is not an official sqlx project, just something I always wanted to have.
+
 ## Installation
 
 Install [sqruff](https://github.com/quarylabs/sqruff) if you haven't already: `cargo install sqruff`
@@ -49,7 +51,7 @@ indented_joins = True
 
 ## GitHub Action
 
-Use the format checker as a step in a GitHub Actions:
+Use the format checker as a step in GitHub Actions:
 
 ```yaml
 steps:

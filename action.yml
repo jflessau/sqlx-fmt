@@ -1,4 +1,4 @@
-name: "SQLx Format Checker"
+name: "sqlx-fmt"
 description: "Check if SQL code in sqlx macros needs formatting using sqruff."
 
 inputs:
