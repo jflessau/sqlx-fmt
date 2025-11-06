@@ -1,35 +1,23 @@
 # sqlx-fmt
 
-A CLI tool and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).  
-Supports raw string literals (`r#"..."#`) only.
-
-**Supported sqlx Macros**: `query!`, `query_unchecked!`, `query_as!`, `query_as_unchecked!`, `query_scalar!`, `query_scalar_unchecked!`, `migrate!`
+A CLI tool and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).
 
 ## Prerequisites
 
-- [sqruff](https://github.com/quarylabs/sqruff) installed and available in PATH
-- A `.sqruff` configuration file
+You need [Rust](https://rust-lang.org/tools/install/) and [sqruff](https://github.com/quarylabs/sqruff) installed and available in PATH.
 
-## Usage
+## Installation
 
-Build or install it with cargo:
+Install it with cargo: `cargo install --path .`
 
-```bash
-# build
-cargo build --release
-
-# install
-cargo install --path .
-````
-
-Run the formatter:
+## Run
 
 ```bash
 # format files
 sqlx-fmt format --path path_to_files --config path_to_sqruff_config
 
 # check formatting
-sqlx-fmt check --path path_to_files --config path_to_sqruff_config --check
+sqlx-fmt check --path path_to_files --config path_to_sqruff_config
 ```
 
 ### Example
@@ -40,15 +28,11 @@ sqlx-fmt format --path ./src --config .sqruff
 
 ## Development
 
-TDD is encouraged! To run the tests, use:
-
-```bash
-cargo test
-```
+TDD is encouraged! To run the tests, use `cargo test`.
 
 ## GitHub Action
 
-Use the format checker as a step in a GitHub Actions like so:
+Use the format checker as a step in a GitHub Actions:
 
 ```yaml
 steps:
@@ -62,3 +46,10 @@ steps:
       config-file: "./code_to_format/.sqruff"
       fail-on-unformatted: "false"
 ```
+
+## License
+
+This project is licensed under the MIT License - see LICENSE file.
+
+This project uses [sqruff](https://github.com/quarylabs/sqruff), which is licensed under
+the Apache License 2.0.

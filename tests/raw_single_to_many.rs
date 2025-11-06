@@ -1,6 +1,6 @@
 mod common;
 
-#[test]
+#[test_log::test]
 fn raw_single_to_many() {
     let content = r###"
     sqlx::migrate!(
@@ -8,7 +8,7 @@ fn raw_single_to_many() {
     )
     "###;
 
-    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
+    let formatted = sqlx_fmt::format(content, ".sqruff", 4, &None).unwrap();
 
     let expected = r###"
     sqlx::migrate!(

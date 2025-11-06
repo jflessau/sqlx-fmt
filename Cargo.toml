@@ -9,6 +9,9 @@ walkdir = "2.0"
 tree-sitter = "0.25"
 tree-sitter-rust = "0.24"
 anyhow = "1.0.100"
+log = "0.4"
+env_logger = "0.11"
 
 [dev-dependencies]
+test-log = "0.2.18"
 text-diff = "0.4.0"

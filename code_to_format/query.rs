@@ -1,7 +1,5 @@
 sqlx::query!(
-    r#"
-        SELECT   1 AS "one!"
-    "#,
+    r#"SELECT 1 AS   "one!""#,
     id
  )
 .fetch_one(pool)
