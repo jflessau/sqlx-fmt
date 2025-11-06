@@ -1,7 +1,7 @@
 mod common;
 
-#[test]
-fn query_as() {
+#[test_log::test]
+fn nested() {
     let content = r###"
 {
     sqlx::query!(
@@ -29,6 +29,6 @@ fn query_as() {
 }
     "###;
 
-    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
+    let formatted = sqlx_fmt::format(content, ".sqruff", 4, &None).unwrap();
     common::compare(expected, &formatted);
 }

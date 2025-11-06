@@ -1,24 +1,18 @@
 mod common;
 
-#[test]
-fn raw_single_to_many() {
+#[test_log::test]
+fn raw_single() {
     let content = r###"
     sqlx::migrate!(
-        r#"select *     from test where id = '1' and on = true and foo = 'bar' and foo = 'bar' and foo = 'bar' and foo = 'bar' and foo = 'bar'"#,
+        r#"alter table    test add column log text"#,
     )
     "###;
 
-    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
+    let formatted = sqlx_fmt::format(content, ".sqruff", 4, &None).unwrap();
 
     let expected = r###"
     sqlx::migrate!(
-        r#"
-            select *
-            from test
-            where
-                id = '1'
-            and on = true and foo = 'bar' and foo = 'bar' and foo = 'bar' and foo = 'bar' and foo = 'bar'
-        "#,
+        r#"alter table test add column log text"#,
     )
     "###;
 
