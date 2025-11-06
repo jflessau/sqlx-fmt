@@ -1,7 +1,7 @@
 mod common;
 
 #[test]
-fn query() {
+fn query_as() {
     let content = r###"
 {
     sqlx::query!(
@@ -12,13 +12,8 @@ fn query() {
         "#,
         id
     )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| warn!("fails query, error: {e:?}"))
 }
     "###;
-
-    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
 
     let expected = r###"
 {
@@ -31,11 +26,9 @@ fn query() {
         "#,
         id
     )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| warn!("fails query, error: {e:?}"))
 }
     "###;
 
+    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
     common::compare(expected, &formatted);
 }

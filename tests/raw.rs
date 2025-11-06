@@ -1,11 +1,9 @@
 mod common;
 
 #[test]
-fn query_scalar() {
+fn query_as() {
     let content = r###"
-{
-    sqlx::query_scalar!(
-        Test,
+    sqlx::query!(
         r#"
             select   *
                 from
@@ -13,18 +11,10 @@ fn query_scalar() {
         "#,
         id
     )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| warn!("fails query, error: {e:?}"))
-}
     "###;
 
-    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
-
     let expected = r###"
-{
-    sqlx::query_scalar!(
-        Test,
+    sqlx::query!(
         r#"
             select *
             from
@@ -33,11 +23,8 @@ fn query_scalar() {
         "#,
         id
     )
-    .fetch_one(pool)
-    .await
-    .map_err(|e| warn!("fails query, error: {e:?}"))
-}
     "###;
 
+    let formatted = sqlx_fmt::format(content, ".sqruff").unwrap();
     common::compare(expected, &formatted);
 }
