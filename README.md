@@ -4,7 +4,7 @@ A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/laun
 
 This is not an official sqlx project, just something I always wanted to have.
 
-This project is a WiP.
+This project is a WIP.
 
 ## Installation
 
@@ -67,6 +67,14 @@ steps:
       config-file: "./code_to_format/.sqruff"
       fail-on-unformatted: "false"
 ```
+
+### Inputs
+
+| Input                 | Required | Default   | Description                                                                      |
+| --------------------- | -------- | --------- | -------------------------------------------------------------------------------- |
+| `context`             | no       | `.`       | Path to the directory/file to format/check, e.g. `./src`                         |
+| `config-file`         | no       | `.sqruff` | Path to the sqruff config file. Default config is used if the file is not found. |
+| `fail-on-unformatted` | no       | `true`    | If 'true', the action will fail if any unformatted files are found.              |
 
 ## Development
 
