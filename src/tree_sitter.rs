@@ -158,7 +158,15 @@ fn format_raw_string_literal<'a>(
             quote = format!("r{}\"\n", "#".repeat(hash_count)),
             replacement = replacement
                 .lines()
-                .map(|line| format!("{}{}", " ".repeat(col.saturating_add(4)), line))
+                .map(|line| format!(
+                    "{}{}",
+                    if !line.trim().is_empty() {
+                        " ".repeat(col.saturating_add(4))
+                    } else {
+                        "".to_string()
+                    },
+                    line
+                ))
                 .collect::<Vec<String>>()
                 .join("\n")
                 .trim_end(),
@@ -179,7 +187,15 @@ fn format_raw_string_literal<'a>(
             quote = format!("r{}\"\n", "#".repeat(hash_count)),
             replacement = replacement
                 .lines()
-                .map(|line| format!("{}{}", " ".repeat(col.saturating_add(4)), line))
+                .map(|line| format!(
+                    "{}{}",
+                    if !line.trim().is_empty() {
+                        " ".repeat(col.saturating_add(4))
+                    } else {
+                        "".to_string()
+                    },
+                    line
+                ))
                 .collect::<Vec<String>>()
                 .join("\n")
                 .trim_end(),
