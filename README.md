@@ -4,7 +4,7 @@ A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/laun
 
 This is not an official sqlx project, just something I always wanted to have.
 
-This project is a WiP. 
+This project is a WiP.
 
 ## Installation
 
@@ -42,7 +42,7 @@ sqlx-fmt format --path ./src --config .sqruff
 <pre>
 [sqruff]
 dialect = postgres
-rules = all
+rules = ambiguous,capitalisation,convention,layout,references
 
 [sqruff:indentation]
 indent_unit = space
