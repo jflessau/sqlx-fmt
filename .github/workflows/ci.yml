@@ -92,6 +92,8 @@ jobs:
         with:
           crate: cargo-nextest
           locked: true
+      - name: install sqruff
+        run: cargo install sqruff
       - name: cargo nextest
         run: |
           cargo nextest run --no-fail-fast
