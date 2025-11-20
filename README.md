@@ -1,5 +1,8 @@
 # sqlx-fmt
 
+![CI](https://github.com/jflessau/sqlx-fmt/actions/workflows/ci.yml/badge.svg)
+
+
 A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/launchbadge/sqlx) macros in Rust files using [sqruff](https://github.com/quarylabs/sqruff?tab=readme-ov-file).
 
 This is not an official sqlx project, just something I always wanted to have.
