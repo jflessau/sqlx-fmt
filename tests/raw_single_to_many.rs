@@ -15,8 +15,7 @@ fn raw_single_to_many() {
         r#"
             select *
             from test
-            where
-                id = '1'
+            where id = '1'
             and on = true and foo = 'bar' and foo = 'bar' and foo = 'bar' and foo = 'bar' and foo = 'bar'
         "#,
     )
