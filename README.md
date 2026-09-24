@@ -6,8 +6,6 @@ A CLI and GitHub Action to format SQL code within [sqlx](https://github.com/laun
 
 This is not an official sqlx project, just something I always wanted to have.
 
-This project is a WIP.
-
 ## Installation
 
 Install [sqruff](https://github.com/quarylabs/sqruff) if you haven't already: `cargo install sqruff`
@@ -40,7 +38,7 @@ sqlx-fmt format --path ./src --config .sqruff
 
 <details>
 <summary><b>Example .sqruff config</b></summary>
-  
+
 <a href="https://github.com/quarylabs/sqruff/blob/main/docs/rules.md">sqruff config docs</a>
 
 <pre>
