@@ -68,6 +68,7 @@ steps:
       context: "./code_to_format"
       config-file: "./code_to_format/.sqruff"
       fail-on-unformatted: "false"
+      sqruff-version: "v0.40.0"
 ```
 
 ### Inputs
@@ -76,7 +77,10 @@ steps:
 | --------------------- | -------- | --------- | -------------------------------------------------------------------------------- |
 | `context`             | no       | `.`       | Path to the directory/file to format/check, e.g. `./src`                         |
 | `config-file`         | no       | `.sqruff` | Path to the sqruff config file. Default config is used if the file is not found. |
-| `fail-on-unformatted` | no       | `true`    | If 'true', the action will fail if any unformatted files are found.              |
+| `fail-on-unformatted` | no       | `true`    | If `true`, the action will fail if any unformatted files are found.              |
+| `sqruff-version`      | no       | `v0.40.0` | Sqruff release to install. An omitted or empty value uses `v0.40.0`.             |
+
+The action installs Sqruff automatically. Set `sqruff-version` explicitly to test or adopt a different release.
 
 ## Development
 
