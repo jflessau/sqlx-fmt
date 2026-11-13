@@ -54,7 +54,7 @@ fn find_and_collect<'a, F>(
     node: Node<'a>,
     source: &'a [u8],
     macro_names: &Vec<String>,
-    _literal_indentation: usize,
+    literal_indentation: usize,
     formatter: &mut F,
     replacements: &mut Vec<(Range, String)>,
 ) where
@@ -79,7 +79,12 @@ fn find_and_collect<'a, F>(
                         .children(cursor)
                         .find(|n| n.kind() == "raw_string_literal")
                     {
-                        match format_raw_string_literal(source, &raw_string_literal, formatter) {
+                        match format_raw_string_literal(
+                            source,
+                            &raw_string_literal,
+                            literal_indentation,
+                            formatter,
+                        ) {
                             Ok(v) => replacements.push((raw_string_literal.range(), v)),
                             Err(e) => {
                                 error!(
@@ -115,7 +120,7 @@ fn find_and_collect<'a, F>(
             child,
             source,
             macro_names,
-            _literal_indentation,
+            literal_indentation,
             formatter,
             replacements,
         );
@@ -125,6 +130,7 @@ fn find_and_collect<'a, F>(
 fn format_raw_string_literal<'a>(
     source: &'a [u8],
     raw_string_literal: &Node<'a>,
+    literal_indentation: usize,
     formatter: &mut impl FnMut(&str, bool) -> Result<String>,
 ) -> Result<String> {
     let literal = raw_string_literal
@@ -136,6 +142,8 @@ fn format_raw_string_literal<'a>(
     let (unquoted, hash_count) = unquote_raw_string_literal(literal);
 
     let col: usize = raw_string_literal.start_position().column;
+    // Keep multiline SQL aligned to the literal plus the configured extra padding.
+    let indent = col.saturating_add(literal_indentation);
 
     let formatter_res = formatter(unquoted, true);
     let Ok(replacement) = formatter_res else {
@@ -161,7 +169,7 @@ fn format_raw_string_literal<'a>(
                 .map(|line| format!(
                     "{}{}",
                     if !line.trim().is_empty() {
-                        " ".repeat(col.saturating_add(4))
+                        " ".repeat(indent)
                     } else {
                         "".to_string()
                     },
@@ -190,7 +198,7 @@ fn format_raw_string_literal<'a>(
                 .map(|line| format!(
                     "{}{}",
                     if !line.trim().is_empty() {
-                        " ".repeat(col.saturating_add(4))
+                        " ".repeat(indent)
                     } else {
                         "".to_string()
                     },
